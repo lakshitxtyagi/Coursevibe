@@ -1,0 +1,106 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "name": "Introduction to Machine Learning",
+      "code": "CS401",
+      "instructor": "Dr. Sarah Johnson",
+      "department": "Computer Science",
+      "rating": 4.8,
+      "totalReviews": 156,
+      "description": "This course provides a comprehensive introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, neural networks, and practical implementation using Python libraries.",
+      "prerequisites": "Calculus, Linear Algebra, Programming Fundamentals",
+      "credits": 4,
+      "difficulty": "Intermediate",
+      "workload": "Heavy (8-10 hours/week)",
+      "reviews": [
+        {
+          "id": 1,
+          "rating": 5,
+          "review": "Excellent introduction to ML concepts. The practical assignments were particularly helpful.",
+          "author": "Alex M.",
+          "date": "2 weeks ago",
+          "attendance": "90%",
+          "difficulty_rating": "Challenging but fair"
+        },
+        {
+          "id": 2,
+          "rating": 4,
+          "review": "Great course content, but assignments can be time-consuming. Professor is very knowledgeable and responsive.",
+          "author": "Jamie K.",
+          "date": "1 month ago",
+          "attendance": "85%",
+          "difficulty_rating": "Moderate"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Web Development",
+      "code": "CS301",
+      "instructor": "Prof. David Miller",
+      "department": "Computer Science",
+      "rating": 4.9,
+      "totalReviews": 178,
+      "description": "A comprehensive course covering modern web development technologies including HTML, CSS, JavaScript, React, and Node.js. Students will build full-stack web applications and learn industry best practices.",
+      "prerequisites": "Introduction to Programming",
+      "credits": 3,
+      "difficulty": "Intermediate",
+      "workload": "Medium (6-8 hours/week)",
+      "reviews": [
+        {
+          "id": 3,
+          "rating": 5,
+          "review": "Great hands-on experience with modern web technologies. The final project was challenging but rewarding.",
+          "author": "Chris L.",
+          "date": "3 weeks ago",
+          "attendance": "95%",
+          "difficulty_rating": "Moderate"
+        },
+        {
+          "id": 4,
+          "rating": 5,
+          "review": "Professor Miller is an excellent instructor who stays updated with current trends. Assignments were practical and relevant to industry needs.",
+          "author": "Taylor S.",
+          "date": "2 months ago",
+          "attendance": "90%",
+          "difficulty_rating": "Moderate"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Mobile App Development",
+      "code": "CS405",
+      "instructor": "Dr. Emily Martinez",
+      "department": "Computer Science",
+      "rating": 4.8,
+      "totalReviews": 156,
+      "description": "This course covers mobile application development for iOS and Android platforms. Students will learn native and cross-platform development approaches, UI/UX design principles, and backend integration.",
+      "prerequisites": "Object-Oriented Programming, Web Development basics",
+      "credits": 4,
+      "difficulty": "Intermediate to Advanced",
+      "workload": "Heavy (8-10 hours/week)",
+      "reviews": [
+        {
+          "id": 8,
+          "rating": 5,
+          "review": "Hands-on experience with both iOS and Android development. Dr. Martinez is incredibly knowledgeable and provides great feedback.",
+          "author": "Ryan M.",
+          "date": "1 month ago",
+          "attendance": "90%",
+          "difficulty_rating": "Challenging but worth it"
+        },
+        {
+          "id": 9,
+          "rating": 4,
+          "review": "Great course that balances theory and practice. The group project helped me build a portfolio-worthy app.",
+          "author": "Priya S.",
+          "date": "2 months ago",
+          "attendance": "85%",
+          "difficulty_rating": "Moderate to difficult"
+        }
+      ]
+    }
+  ]
+}
