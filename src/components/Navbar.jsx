@@ -4,11 +4,13 @@ import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import logo from '../images/c_logo.png';
 import { FaSearch } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
+import { dummyCourses } from '../data/dummyCourses';
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,12 +19,45 @@ const Navbar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [recentSearches, setRecentSearches] = useState([]);
   const [trendingSearches, setTrendingSearches] = useState([
-    'Introduction to Computer Science',
-    'Data Structures',
     'Machine Learning',
-    'Web Development'
+    'Data Structures',
+    'Web Development',
+    'Mobile App Development',
+    'Artificial Intelligence'
   ]);
   const searchContainerRef = useRef(null);
+  const notificationsRef = useRef(null);
+
+  // Dummy notifications data
+  const notifications = [
+    {
+      id: 1,
+      type: 'course_update',
+      title: 'Course Update',
+      message: 'Web Development (CS301) has been updated with new assignments',
+      time: '2 hours ago',
+      read: false
+    },
+    {
+      id: 2,
+      type: 'new_review',
+      title: 'New Review',
+      message: 'A new review was posted for Machine Learning (CS401)',
+      time: '1 day ago',
+      read: false
+    },
+    {
+      id: 3,
+      type: 'leaderboard',
+      title: 'Leaderboard Update',
+      message: 'Weekly leaderboard has been updated. Data Structures is now #1!',
+      time: '2 days ago',
+      read: true
+    }
+  ];
+
+  // Count unread notifications
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -46,6 +81,9 @@ const Navbar = () => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
         setIsSearchOpen(false);
       }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setIsNotificationsOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -53,24 +91,17 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (searchQuery.trim()) {
-        try {
-          const response = await fetch(`${API_BASE_URL}/courses/search?query=${searchQuery}`);
-          if (response.ok) {
-            const data = await response.json();
-            setSearchResults(data);
-          }
-        } catch (error) {
-          console.error('Error fetching search results:', error);
-        }
-      } else {
-        setSearchResults([]);
-      }
-    };
-
-    const debounceTimer = setTimeout(fetchSearchResults, 300);
-    return () => clearTimeout(debounceTimer);
+    // Filter courses based on search query
+    if (searchQuery.trim()) {
+      const filteredResults = dummyCourses.filter(course => 
+        course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.instructor.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(filteredResults);
+    } else {
+      setSearchResults([]);
+    }
   }, [searchQuery]);
 
   const handleSignOut = () => {
@@ -87,6 +118,26 @@ const Navbar = () => {
     const updatedRecentSearches = [query, ...recentSearches.filter(s => s !== query)].slice(0, 5);
     setRecentSearches(updatedRecentSearches);
     localStorage.setItem('recentSearches', JSON.stringify(updatedRecentSearches));
+  };
+  
+  const navigateToCourse = (course) => {
+    // Navigate using the course code which matches the route paths in App.jsx
+    setIsSearchOpen(false);
+    navigate(`/course/${course.code.toLowerCase()}`);
+  };
+
+  // Function to get notification icon based on type
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case 'course_update':
+        return <span className="text-blue-500 text-lg">📘</span>;
+      case 'new_review':
+        return <span className="text-green-500 text-lg">📝</span>;
+      case 'leaderboard':
+        return <span className="text-yellow-500 text-lg">🏆</span>;
+      default:
+        return <span className="text-gray-500 text-lg">📣</span>;
+    }
   };
 
   // Function to check if a path is active
@@ -138,17 +189,23 @@ const Navbar = () => {
                         <div>
                           <h3 className="text-sm font-semibold text-gray-600 mb-2">Search Results</h3>
                           {searchResults.map((course) => (
-                            <Link
+                            <div
                               key={course.id}
-                              to={`/course/${course.id}`}
-                              className="block px-4 py-2 hover:bg-teal-50 rounded transition-colors"
                               onClick={() => {
                                 handleSearch(course.name);
-                                setIsSearchOpen(false);
+                                navigateToCourse(course);
                               }}
+                              className="flex justify-between items-center px-4 py-2 hover:bg-teal-50 rounded cursor-pointer transition-colors"
                             >
-                              {course.name}
-                            </Link>
+                              <div>
+                                <div className="font-medium text-gray-900">{course.name}</div>
+                                <div className="text-sm text-gray-500">{course.instructor} • {course.code}</div>
+                              </div>
+                              <div className="flex items-center text-yellow-400">
+                                <span className="text-sm font-medium mr-1">{course.rating}</span>
+                                <span>★</span>
+                              </div>
+                            </div>
                           ))}
                         </div>
                       ) : (
@@ -168,16 +225,28 @@ const Navbar = () => {
                             </div>
                           )}
                           <div>
-                            <h3 className="text-sm font-semibold text-gray-600 mb-2">Trending Searches</h3>
-                            {trendingSearches.map((search, index) => (
-                              <div
-                                key={index}
-                                className="px-4 py-2 hover:bg-teal-50 rounded cursor-pointer transition-colors"
-                                onClick={() => handleSearch(search)}
-                              >
-                                {search}
-                              </div>
-                            ))}
+                            <h3 className="text-sm font-semibold text-gray-600 mb-2">Trending Courses</h3>
+                            {trendingSearches.map((search, index) => {
+                              const course = dummyCourses.find(c => c.name.includes(search));
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex justify-between items-center px-4 py-2 hover:bg-teal-50 rounded cursor-pointer transition-colors"
+                                  onClick={() => {
+                                    handleSearch(search);
+                                    if (course) navigateToCourse(course);
+                                  }}
+                                >
+                                  <div className="font-medium text-gray-900">{search}</div>
+                                  {course && (
+                                    <div className="flex items-center text-yellow-400">
+                                      <span className="text-sm font-medium mr-1">{course.rating}</span>
+                                      <span>★</span>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         </>
                       )}
@@ -221,12 +290,64 @@ const Navbar = () => {
               Forms
             </Link>
 
-            <button className="text-teal-600 hover:text-teal-700 transition-colors relative">
-              <BellIcon className="w-6 h-6" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                3
-              </span>
-            </button>
+            {/* Notifications */}
+            <div className="relative" ref={notificationsRef}>
+              <button 
+                className="text-teal-600 hover:text-teal-700 transition-colors relative"
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+              >
+                <BellIcon className="w-6 h-6" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {isNotificationsOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 z-50">
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <h3 className="font-semibold text-gray-900">Notifications</h3>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <div 
+                          key={notification.id} 
+                          className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${notification.read ? 'opacity-75' : ''}`}
+                        >
+                          <div className="flex">
+                            <div className="mr-3 mt-1">
+                              {getNotificationIcon(notification.type)}
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm text-gray-900">{notification.title}</p>
+                              <p className="text-sm text-gray-600">{notification.message}</p>
+                              <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                            </div>
+                            {!notification.read && (
+                              <div className="ml-2 h-2 w-2 bg-teal-500 rounded-full self-start mt-2"></div>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-6 text-center text-gray-500">
+                        <p>No notifications</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="px-4 py-2 border-t border-gray-100 text-center">
+                    <button 
+                      className="text-sm text-teal-600 hover:text-teal-700"
+                      onClick={() => setIsNotificationsOpen(false)}
+                    >
+                      Mark all as read
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {currentUser ? (
               <div className="relative">
@@ -244,6 +365,7 @@ const Navbar = () => {
                     <Link 
                       to="/profile" 
                       className="block px-4 py-2 text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
                     </Link>
@@ -257,31 +379,9 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <div className="relative">
-                <button 
-                  className="text-teal-600 hover:text-teal-700 transition-colors"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                  <UserCircleIcon className="w-7 h-7" />
-                </button>
-
-                {isMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2">
-                    <Link 
-                      to="/login" 
-                      className="block px-4 py-2 text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors"
-                    >
-                      Log In
-                    </Link>
-                    <Link 
-                      to="/signup" 
-                      className="block px-4 py-2 text-gray-700 hover:bg-teal-50 hover:text-teal-600 transition-colors"
-                    >
-                      Sign Up
-                    </Link>
-                  </div>
-                )}
-              </div>
+              <Link to="/login" className="bg-teal-600 hover:bg-teal-700 transition-colors text-white py-2 px-4 rounded-lg text-sm font-medium">
+                Sign In
+              </Link>
             )}
           </div>
         </div>

@@ -103,16 +103,6 @@ const Helpdesk = () => {
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Login Button */}
-      <Link to="/login">
-        <Button
-          className="fixed bottom-6 right-24 rounded-full p-4 shadow-lg transition-all duration-300 hover:shadow-xl z-50
-            bg-teal-600 hover:bg-teal-700 text-white"
-        >
-          <LogIn className="h-6 w-6 stroke-[2] text-white" />
-        </Button>
-      </Link>
-
       {/* Floating Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}

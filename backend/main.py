@@ -11,6 +11,8 @@ from supabase import create_client
 import uvicorn
 from chat_service import chat_service
 
+SUPABASE_URL = "https://isafwfgmkrjfnnihhdxt.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzYWZ3Zmdta3JqZm5uaWhoZHh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0MTk2NzEsImV4cCI6MjA1ODk5NTY3MX0.t-Vw3OEgh5D3DOle6nN1vCluMjxX87tqDRG8UXtPEz8"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 

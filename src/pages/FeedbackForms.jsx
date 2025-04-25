@@ -7,7 +7,15 @@ const FeedbackForms = () => {
 
   return (
     <Layout>
-      <main className="container mx-auto my-16 px-4">
+      {/* Header Section with Teal Gradient */}
+      <div className="bg-gradient-to-r from-teal-600 to-teal-700 text-white py-8 mb-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <h1 className="text-3xl font-bold mb-2">Feedback Forms</h1>
+          <p className="text-teal-100">Complete feedback forms for your courses</p>
+        </div>
+      </div>
+
+      <main className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Search Section */}
           <div className="bg-white rounded-lg shadow-lg p-6">
